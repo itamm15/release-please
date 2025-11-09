@@ -1,0 +1,38 @@
+name: Release PR develop -> main
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog between main..develop
+        id: changelog
+        uses: metcalfc/changelog-generator@v4.6.2
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+          head-ref: origin/develop
+          base-ref: origin/main
+          fetch: false
+
+      - name: Create / update PR develop -> main
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: release/develop-main
+          title: "Release: develop -> main"
+          body: ${{ steps.changelog.outputs.changelog }}
+          labels: "release"
+          commit-message: "chore: sync develop to main for release"

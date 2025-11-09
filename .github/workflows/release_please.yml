@@ -32,6 +32,7 @@ jobs:
       - name: Create or update PR develop -> main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHANGELOG: ${{ steps.changelog.outputs.changelog }}
         run: |
           ## Check, if the release PR exists
 
@@ -44,12 +45,12 @@ jobs:
 
           if [ -n "$PR_NUMBER" ]; then
             echo "PR exists, let's update it"
-            gh pr edit "$PR_NUMBER" --body "${{ steps.changelog.outputs.changelog }}"
+            echo "$CHANGELOG" | gh pr edit "$PR_NUMBER" --body-file -
           else
             ## Create new PR
-            gh pr create \
+            echo "$CHANGELOG" | gh pr create \
               --base main \
               --head develop \
               --title "Release: develop -> main" \
-              --body "${{ steps.changelog.outputs.changelog }}"
+              --body-file -
           fi

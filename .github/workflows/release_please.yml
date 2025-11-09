@@ -27,7 +27,6 @@ jobs:
           myToken: ${{ secrets.GITHUB_TOKEN }}
           head-ref: origin/develop
           base-ref: origin/main
-          fetch: false
 
       - name: Create / update PR develop -> main
         uses: peter-evans/create-pull-request@v7

@@ -25,8 +25,8 @@ jobs:
         uses: metcalfc/changelog-generator@v4.6.2
         with:
           myToken: ${{ secrets.GITHUB_TOKEN }}
-          head-ref: origin/develop
-          base-ref: origin/main
+          head-ref: develop
+          base-ref: main
 
       - name: Create / update PR develop -> main
         uses: peter-evans/create-pull-request@v7

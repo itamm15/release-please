@@ -28,13 +28,28 @@ jobs:
           head-ref: develop
           base-ref: main
 
-      - name: Create / update PR develop -> main
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          branch: develop
-          title: "Release: develop -> main"
-          body: ${{ steps.changelog.outputs.changelog }}
-          labels: "release"
-          commit-message: "chore: sync develop to main for release"
+      
+      - name: Create or update PR develop -> main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ## Check, if the release PR exists
+
+          PR_NUMBER=$(gh pr list \
+            --base main \
+            --head develop \
+            --state open \
+            --json number \
+            --jq '.[0].number')
+
+          if [ -n "$PR_NUMBER" ]; then
+            echo "PR exists, let's update it"
+            gh pr edit "$PR_NUMBER" --body "${{ steps.changelog.outputs.changelog }}"
+          else
+            ## Create new PR
+            gh pr create \
+              --base main \
+              --head develop \
+              --title "Release: develop -> main" \
+              --body "${{ steps.changelog.outputs.changelog }}"
+          fi

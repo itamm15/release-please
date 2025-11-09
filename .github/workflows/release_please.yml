@@ -23,12 +23,10 @@ jobs:
       - name: Generate changelog between main..develop
         id: changelog
         run: |
-          REPO_URL="https://github.com/itamm15/release-please"
-
-          PR_LINES=$(git log --merges --pretty=format:'%s' origin/main..origin/develop \
-            | sed -n "s/Merge pull request #\([0-9]\+\) .*/- [PR #\1](${REPO_URL}\/pull\/\1)/p")
-
-          echo "$PR_LINES" >> body.md
+          git fetch origin main develop
+          ## just `Merge pull request *` messages
+          
+          git log --merges --pretty=format:'%s' origin/main..origin/develop >> body.md
       
       - name: Create or update PR develop -> main
         env:

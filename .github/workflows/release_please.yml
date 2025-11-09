@@ -22,17 +22,17 @@ jobs:
 
       - name: Generate changelog between main..develop
         id: changelog
-        uses: metcalfc/changelog-generator@v4.6.2
-        with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
-          head-ref: develop
-          base-ref: main
+        run: |
+          REPO_URL="https://github.com/itamm15/release-please"
 
+          PR_LINES=$(git log --merges --pretty=format:'%s' origin/main..origin/develop \
+            | sed -n "s/Merge pull request #\([0-9]\+\) .*/- [PR #\1](${REPO_URL}\/pull\/\1)/p")
+
+          echo "$PR_LINES" >> body.md
       
       - name: Create or update PR develop -> main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CHANGELOG: ${{ steps.changelog.outputs.changelog }}
         run: |
           ## Check, if the release PR exists
 
@@ -45,12 +45,12 @@ jobs:
 
           if [ -n "$PR_NUMBER" ]; then
             echo "PR exists, let's update it"
-            echo "$CHANGELOG" | gh pr edit "$PR_NUMBER" --body-file -
+            gh pr edit "$PR_NUMBER" --body-file body.md
           else
             ## Create new PR
-            echo "$CHANGELOG" | gh pr create \
+            gh pr create \
               --base main \
               --head develop \
               --title "Release: develop -> main" \
-              --body-file -
+              --body-file body.md
           fi

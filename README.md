@@ -61,7 +61,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create or update release PR
-        uses: itamm15/release-please-action@main
+        # Pin to a specific commit for reproducible runs
+        uses: itamm15/release-please-action@<commit-sha>
         with:
           base: ${{ github.event.inputs.base }}
           head: ${{ github.event.inputs.head }}
@@ -73,12 +74,17 @@ You can also hard-code the branches if you always release from a specific head t
 
 ```yaml
       - name: Create or update release PR
-        uses: itamm15/release-please-action@main
+        # Pin to a specific commit for reproducible runs
+        uses: itamm15/release-please-action@<commit-sha>
         with:
           base: main
           head: develop
           token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+> **Recommendation**: Always **pin this action by commit SHA**  
+> (for example `itamm15/release-please-action@a1b2c3d4e5f6...`) rather than a branch or tag.  
+> This ensures your workflows stay reproducible and are not affected by future changes to this repository.
 
 ### Requirements & notes
 

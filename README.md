@@ -86,6 +86,11 @@ You can also hard-code the branches if you always release from a specific head t
 > (for example `itamm15/release-please-action@a1b2c3d4e5f6...`) rather than a branch or tag.  
 > This ensures your workflows stay reproducible and are not affected by future changes to this repository.
 
+### Example repository
+
+For a concrete example of how this action can be wired into a workflow, see the companion repository:  
+[release-please-use-case](https://github.com/itamm15/release-please-use-case).
+
 ### Requirements & notes
 
 - **Environment**: Designed for GitHub-hosted runners (e.g. `ubuntu-latest`) where the **`gh` CLI is pre-installed**. If you run on a custom runner, ensure `gh` is installed and authenticated.
